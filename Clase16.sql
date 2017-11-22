@@ -480,44 +480,9 @@ WHERE
  * Insert a new employee to , but with an null email. Explain what happens. 
  */
     
-/* iviiiii
- * insert  into `employees`(`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,
- * `officeCode`,`reportsTo`,`jobTitle`) values 
-(1002,'aaaras','Ivan','x1234',NULL,'1',NULL,'ceo');
 
--- Alert: el campo email no puede ser nulo y no realiza el insert
- */
-    
-/* pitriii
- * -- It throws an error because of the NOT NULL constraint we added on the 
- * email attribute when we created the table.
-    
-INSERT INTO `employees`(`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,
-`officeCode`,`reportsTo`,`jobTitle`) VALUES 
-(1056,'Patterson','Mary','x4611',NULL,'1',1002,'VP Sales');
- */
-
-/* lautii
- * insert  into `employees`(`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,`officeCode`,`reportsTo`,`jobTitle`) values 
-(1002,'Murphy','Diane','x5800', NULL,'1',NULL,'President');
--- you get an error SQL Error [1048] [23000]: Column 'email' cannot be null
- */
-
-/* sosita
- * INSERT INTO sakila.employees
-(employeeNumber, lastName, firstName, extension, email, officeCode, reportsTo, jobTitle)
-VALUES(0, 'Sosa', 'Camilo', '5105', NULL, '1', 1002, 'Terminator');
--- No se puede crear un empleado con email nulo porque cuando creamos la tabla pusimos `email` varchar(100) NOT NULL
--- Por lo tanto no se puede setear como nulo el valor del email
- */
-
-/* jere
- * 
-insert  into `employees`(`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,`officeCode`,`reportsTo`,`jobTitle`) values 
-(1002,'aaaras','Ivan','x1234',NULL,'1',NULL,'ceo');
-
--- El email no puede ser nulo entonces tira error
- */
+-- El campo email no puede ser nulo y no realiza el insert
+ 
     
     
 -- 2
@@ -532,63 +497,12 @@ What did happen? Explain.Then run this other
   UPDATE employees SET employeeNumber = employeeNumber + 20
  */
     
-/* iviii
- * UPDATE employees set employeeNumber = employeeNumber - 20
+
 
 -- Actualiza la tabla employees y le suma 20 al employeedNumber de cada empleado. 
 
-SELECT * FROM employees;
- 
--- /////////////////////
-
-UPDATE employees set employeeNumber = employeeNumber + 20
-
--- Intenta actualizar la tabla employees, y al querer restarle 20 al employeeNumber,
- tira error porque el elmployeedNumber esta dublicado.
- */
-    
-/* pitrii
- * 
-UPDATE employees set employeeNumber = employeeNumber - 20;
-
--- This query doesn't work because it runs on cascade.
--- The distance between the last 2 entrys' employeeNumber is exactly 20, /
--- so if it added 20 to the second entry, its value would be the same than the 3rd column's entry 
-
-UPDATE employees set employeeNumber = employeeNumber + 20;
- */
-
-/* lautii
- * cuando le sumas la clave primaria se pisa y por el constraint va tirar error
- UPDATE employees set employeeNumber = employeeNumber - 20;
-UPDATE employees set employeeNumber = employeeNumber + 20;
- */
-   
-/* sosita
- * UPDATE employees set employeeNumber = employeeNumber - 20;
-
--- What did happen? Explain.
--- Le quito a cada empleado, en employeeNumbre 20 de su valor original 
-SELECT * FROM employees;
-
--- Then run this other
-UPDATE employees set employeeNumber = employeeNumber + 20;
-
--- El mensaje que me devuelve es: SQL Error [1062] [23000]: Duplicate entry '1056' for key 'PRIMARY'
--- Lo que pasa es que un empleado (Phan) tiene justo 20 menos que otro (Firrelli) entonces cuando quiere sumarle 20 
--- a employeeNumber (de Phan) se vuelven los dos empleados con el mismo employeeNumber (Firrelli y Phan). Como es la primary key 
--- no se puede repetir entonces te devuelve ese error.
- */
-
-/* jere
- * UPDATE employees set employeeNumber = employeeNumber - 20
-
--- Le hace un update a la tabla restandole 20 al employeeNumber
-
-UPDATE employees set employeeNumber = employeeNumber + 20
-
 -- Tira un error diciendo que hay un atributo primario que esta duplicado 
- */
+ 
     
     
     
@@ -598,44 +512,12 @@ UPDATE employees set employeeNumber = employeeNumber + 20
  *  Add a age column to the table employee where and it can only accept values from 16 up to 70 years old
  */
     
-/* iviii
- * 
 ALTER TABLE employees ADD AGE INT;
 ALTER TABLE employees
 ADD CONSTRAINT myCheckConstraint CHECK(AGE >= 18 AND AGE <=70);
- */
 
-/* pitriii
- * ALTER TABLE employees
-ADD age TINYINT UNSIGNED DEFAULT 69;
-
-ALTER TABLE employees
-ADD CONSTRAINT age CHECK(age >= 16 AND age <= 70);
- */
-
-/* lautii
- *  ALTER TABLE employees ADD age INT;
- ALTER TABLE employees
-   ADD CONSTRAINT myCheckAge CHECK(age > 16) ; -- no funciona
- ALTER TABLE employees
-   ADD CONSTRAINT myCheckAgee CHECK(age <70 ); -- tampoco funciona
-   
-ALTER TABLE employees CONSTRAINT CheckAge CHECK(age BETWEEN 16 and 70); -- get error 
--- no quiero escribir un trigger
-insert  into `employees`(`employeeNumber`,`lastName`,`firstName`,`extension`,`email`,`officeCode`,`reportsTo`,`jobTitle`, age) values 
-(009,'Murphy','Diane','x5800','dmurphy@classicmodelcars.com','1',NULL,'President', 15);
- */
-
-/* sosita
- * ALTER TABLE employees
-ADD `age` INT NOT NULL CHECK (age >=16 AND age <=70);
- */
     
-/* jere
- * ALTER TABLE employees ADD AGE INT;
-ALTER TABLE employees
-ADD CONSTRAINT myCheckConstraint CHECK(AGE >= 18 AND AGE <=70);
- */
+
     
     
 -- 4
@@ -650,10 +532,7 @@ ADD CONSTRAINT myCheckConstraint CHECK(AGE >= 18 AND AGE <=70);
  *  other than root, can connect to MySQL and change this table).
  */
     
-/* iviii
- * -- Create a new column called lastUpdate to table employee and use trigger(s) to keep the date-time updated on inserts and updates operations. 
--- Bonus: add a column lastUpdateUser and the respective trigger(s) to specify who was the last MySQL user that changed the row 
--- (assume multiple users, other than root, can connect to MySQL and change this table).
+
 
 ALTER TABLE employees ADD lastUpdate DATETIME DEFAULT NULL;
 
@@ -668,92 +547,6 @@ BEGIN
         lastUpdate = NOW(); 
 END$$
 DELIMITER ;
- */
-    
-/* pitriiii
- * ALTER TABLE employees
-	ADD COLUMN lastUpdate DATETIME;
-
-	
-ALTER TABLE employees
-	ADD COLUMN lastUpdateUser VARCHAR(255);	
-
--- I chose to create a procedure which updates the given employee's data and to call it in both triggers 
-	
-DROP PROCEDURE IF EXISTS classsixteen.UpdateEmployeeLastUpdate ;
-
-DELIMITER $$
-$$
-CREATE PROCEDURE UpdateEmployeeLastUpdate(IN employee_id INT)
-BEGIN
-	UPDATE employees
-	    SET lastUpdate = NOW(),
-	    lastUpdateUser = CURRENT_USER()
-    WHERE employees.employeeNumber = employee_id;
-END $$
-DELIMITER ;
-
-	
-DELIMITER $$
-CREATE TRIGGER after_employee_update 
-    AFTER UPDATE ON employees
-    FOR EACH ROW 
-BEGIN
-    CALL UpdateEmployeeLastUpdate(NEW.employeeNumber);
-END$$
-DELIMITER ;
-
-DELIMITER $$
-CREATE TRIGGER after_employee_insert 
-    AFTER INSERT ON employees
-    FOR EACH ROW 
-BEGIN
-    CALL UpdateEmployeeLastUpdate(NEW.employeeNumber);
-END$$
-DELIMITER ;
-
--- This is actually generating an endless loop since the store procedure calls the trigger again.
--- Soooo FIXME i guess.
-
-update employees set lastName = 'Phanny' where employeeNumber = 1016;
- */
-   
-/* lautiii
- * ALTER TABLE employees_audit ADD lastUpdate DATETIME DEFAULT NULL;
-ALTER TABLE employees_audit ADD lastUpdateUser VARCHAR(32) DEFAULT  "";
-DELIMITER $$
-CREATE TRIGGER employee_lastUpdate 
-    BEFORE UPDATE ON employees
-    FOR EACH ROW 
-BEGIN
-    INSERT INTO employees_audit
-    SET action = 'update',
-    employeeNumber = OLD.employeeNumber,
-    lastname = OLD.lastname,
-    lastUpdateUser = SELECT CURRENT_USER()
-    lastUpdate = NOW();
-     
-END$$
-DELIMITER ;
-DESCRIBE employees_audit;
- */
-
-/* jere
- * 
-ALTER TABLE employees ADD lastUpdate DATETIME DEFAULT NULL;
-
-DELIMITER //
-CREATE TRIGGER employee_lastUpdate 
-    BEFORE UPDATE ON employees
-    FOR EACH ROW 
-BEGIN
-    INSERT INTO employees_audit
-    SET action = 'update',
-     employeeNumber = OLD.employeeNumber,
-        lastUpdate = NOW(); 
-END //
-DELIMITER 
- */
     
     
     
@@ -763,38 +556,8 @@ DELIMITER
 *  What do they do? Explain each of them using its source code for the explanation.
 */
 
-    
-/* pitriiiiii
- * -- ins_film Inserts a new film_text entry, with the same values as the added film.
-
-BEGIN
-    INSERT INTO film_text (film_id, title, description)
-        VALUES (new.film_id, new.title, new.description);
-END
-
--- upd_film Updates the corresponding existing film_text entry for the updated film. 
-
-BEGIN
-	IF (old.title != new.title) OR (old.description != new.description) OR (old.film_id != new.film_id)
-	THEN
-	    UPDATE film_text
-	        SET title=new.title,
-	            description=new.description,
-	            film_id=new.film_id
-	    WHERE film_id=old.film_id;
-	END IF;
-END
-
--- del_film Deletes the corresponding existing film_text entry for the deleted film. 
-
-BEGIN
-    DELETE FROM film_text WHERE film_id = old.film_id;
-END
- */
-
-/* lautii
- * -- ins_film inserta un nuevo film_text
+-- ins_film inserta un nuevo film_text
 -- upd_film hace un update a un film_text ya existente
 -- del_film elimina un el film_text
- */
+
     
