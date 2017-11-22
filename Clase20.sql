@@ -12,12 +12,13 @@ We try translate class 4 exercises to mongodb. Please download sakila db json's 
 7_Show pair of film titles and rating of films that have the same rating.
 8_Get all the films that are available in store id 2 and the manager first/last name of this store (the manager will appear in all the rows).
 
-
-
-Solutions:
-
-
- db.getCollection('films').find({ Rating:'PG-13' },{ Title:  1, 'Special Features':1})
-
- Pitri try...
 */
+
+-- 1
+	db.getCollection('films').find({ Rating:'PG-13' },{ Title: 1, 'Special Features':1})
+
+-- 2
+	db.getCollection('films').distinct('Length')
+	
+-- 3
+	 db.getCollection('films').find({Replacement_Cost:'20'})

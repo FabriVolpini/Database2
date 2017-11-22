@@ -128,14 +128,108 @@ SELECT @customerNo AS Customer,
 	 * Pass either the film id or the film name.
 	 */
 
-SELECT 
+DROP FUNCTION IF EXISTS sakila.getMovieQuantityFromStore ;
+
+DELIMITER $$
+$$
+CREATE FUNCTION sakila.getMovieQuantityFromStore(p_storeId SMALLINT UNSIGNED, p_filmTitle VARCHAR(255)) RETURNS SMALLINT UNSIGNED
+    NOT DETERMINISTIC
+BEGIN
+    DECLARE movies_quantity SMALLINT UNSIGNED;
+    SET movies_quantity = ( SELECT COUNT(film_id)
+							FROM film
+							INNER JOIN inventory USING(film_id)
+							INNER JOIN store USING(store_id)
+							WHERE store_id = p_storeId
+							AND title LIKE p_filmTitle );
+    RETURN (movies_quantity);
+END $$
+DELIMITER ;
+
+SELECT getMovieQuantityFromStore(1, 'COMA HEAD');
 
 -- 2
 	/* Write a stored procedure that returns a list of customer first and last names separated by ";",
 	 *	that live in a certain country. You pass the country it gives you the list of people living there.
 	 */
 
+
+DROP PROCEDURE IF EXISTS sakila.customersFromCountry ;
+
+DELIMITER $$
+$$
+CREATE DEFINER=`root`@`%` PROCEDURE `sakila`.`customersFromCountry`(IN p_countryName VARCHAR(255), OUT out_list TEXT)
+BEGIN
+	DECLARE p_customerList TEXT DEFAULT "";
+	DECLARE v_finished INTEGER DEFAULT 0;
+    DECLARE v_customer_fn varchar(255) DEFAULT "";
+    DECLARE v_customer_ln varchar(255) DEFAULT "";    
+        
+    DECLARE customer_cursor CURSOR FOR 
+        SELECT first_name, last_name
+		FROM customer
+			INNER JOIN address USING (address_id)
+			INNER JOIN city USING (city_id)
+			INNER JOIN country USING (country_id)
+		WHERE country LIKE p_countryName;
+		
+	DECLARE CONTINUE HANDLER 
+        FOR NOT FOUND SET v_finished = 1;
+    
+    OPEN customer_cursor;
+
+    get_customer: LOOP
+
+        FETCH customer_cursor INTO v_customer_fn, v_customer_ln;
+        
+        IF v_finished = 1 THEN 
+            LEAVE get_customer;
+        END IF;
+
+        SET p_customerList = CONCAT(v_customer_fn, " ", v_customer_ln ,";",p_customerList);
+        
+        
+
+    END LOOP get_customer;
+
+    SET out_list = p_customerList;
+    
+    CLOSE customer_cursor;
+    
+    
+	
+END $$
+DELIMITER ;
+
+
+
 -- 3
 	/* Review the function inventory_in_stock *and the procedure *film_in_stock explain the code,
 	 *	write usage examples.
 	 */
+
+
+-- Inventory_in_stock
+
+-- This function gets the number of rentals from a certain entry in the inventory and makes some checks.
+-- If it hasn't been rented, then the inventory entry is in stock.
+-- If it has been rented, it checks if it hasnt been returned yet. 
+-- If the inventory entry hasn't been returned, then it is not in stock (function returns 0)
+-- otherwise it is in stock (function returns 1).
+
+-- Since this movie hasn't been returned yet, it's not in stock. So function returns 0.
+SELECT inventory_in_stock(4106);
+
+-- This movie is in stock, so function returns 1.
+SELECT inventory_in_stock(327);
+
+
+
+-- Film_in_stock
+
+-- This function receives both a film and a store's id and outputs the number copies of that film available in stock.
+-- It achieves this by checking their inventory entrys' stock state with inventory_in_stock function.
+
+-- The film 'COMA HEAD' has four copies available in stock.
+CALL film_in_stock(167, 1, @film_stock);
+SELECT @film_stock;

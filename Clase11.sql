@@ -47,3 +47,20 @@ JOIN address USING (address_id)
 JOIN rental USING (customer_id)
 JOIN payment USING (rental_id)
 GROUP BY 1, 2, 3
+
+#Ejercicio 4
+SELECT film.title
+FROM film
+WHERE film_id NOT IN (SELECT DISTINCT film_id
+FROM inventory);
+
+#Ejercicio 5
+SELECT title,inventory_id
+FROM film
+	INNER JOIN inventory USING(film_id)
+	LEFT JOIN rental USING(inventory_id)
+WHERE rental.rental_id IS NULL;
+
+#Ejercicio 6
+SELECT first_name, last_name, 
+FROM customer

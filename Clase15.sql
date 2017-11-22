@@ -191,6 +191,18 @@ SELECT * FROM actor_information;
 
 -- 5
 
+SELECT * FROM actor_info;
 
 
 -- 6
+
+-- A materialized view is a replica of a target master from a single point in time. 
+-- The master can be either a master table at a master site or a master materialized view at a materialized view site. 
+-- Whereas in multimaster replication tables are continuously updated by other master sites, materialized views are updated from one or more masters through individual batch updates,
+-- known as a refreshes, from a single master site or master materialized view site
+
+-- Why Use Materialized Views?
+--   + Ease Network Loads
+--   + Create a Mass Deployment Environment
+--   + Enable Data Subsetting
+--   + Enable Disconnected Computing

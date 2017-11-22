@@ -34,7 +34,6 @@
 
 11 - Investigate Benchmarks - Run some
 
-12 - Write a driver application (client) in Python, do some operations with it.
 
 
 
@@ -120,6 +119,18 @@
     >4) "Steve Jobs"
 
 8_
+	redis:6379> SUBSCRIBE gordeli
+	Reading messages... (press Ctrl-C to quit)
+	1) "subscribe"
+	2) "gordeli"
+	3) (integer) 1
+
+	---- Otra terminal publish
+
+	redis:6379> PUBLISH gordeli holaaa
+	(integer) 2
+	redis:6379> PUBLISH gordeli skrrrr
+	(integer) 2
 
 9_
     127.0.0.1:6379> multi
@@ -146,3 +157,23 @@
     >1) (integer) 1
     >2) (integer) 1
     >3) (integer) 1
+
+10_
+	Redis SAVE command is used to create a backup of the current Redis database.
+
+	This command will create a dump.rdb file in your Redis directory.
+
+	redis:6379> SAVE
+	OK
+
+	To restore Redis data, move Redis backup file (dump.rdb) into your Redis directory and start the server. To get your Redis directory, use CONFIG command of Redis as shown below.
+
+	redis:6379> CONFIG get dir
+	1) "dir"
+	2) "/data"
+
+	In the output of the above command /data is the directory, where Redis server is installed.
+	
+	
+11_
+	Redis benchmark is the utility to check the performance of Redis by running n commands simultaneously.
