@@ -182,3 +182,15 @@ INNER JOIN payment USING(rental_id)
 GROUP BY 1,2,3;
 
 SELECT * FROM actor_information;
+
+/*
+	5_Analyze view actor_info, explain the entire query and specially how the sub query works.
+		 Be very specific, take some time and decompose each part and give an explanation for each. 
+	6_Materialized views, write a description, why they are used, alternatives, DBMS were they exist, etc. 
+ */
+
+-- 5
+
+
+
+-- 6

@@ -768,3 +768,10 @@ SELECT CAST(last_update AS DATE) as only_date
 FROM address;
 
 SELECT CONVERT("2006-02-15", DATETIME);
+
+
+-- 6
+/*
+ * Investigate NVL, ISNULL, IFNULL, COALESCE, etc type of function. Explain what they do. Which ones are not in MySql and write usage examples.
+ */
+
